@@ -36,9 +36,7 @@ const Home = () => {
           DALL-E AI
         </p>
       </div>
-      <div className="mt-16">
-        <FormField />
-      </div>
+      <div className="mt-16">{/* <FormField /> */}</div>
       <div>
         {loading ? (
           <Loader />

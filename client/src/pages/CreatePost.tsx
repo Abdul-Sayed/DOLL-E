@@ -30,23 +30,42 @@ const CreatePost = () => {
     setForm((form) => ({ ...form, prompt: getRandomPrompt(form.prompt) }));
   };
 
-  const generateImage = () => {
-    // Generate an image based on the prompt
-    setGeneratingImg(true);
+  // Generate an image based on the prompt
+  const generateImage = async () => {
+    if (form.prompt) {
+      try {
+        setGeneratingImg(true);
+        const response = await fetch(`http://localhost:8080/api/dalle`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt: form.prompt }),
+        });
+        const data = await response.json();
+        setForm((form) => ({ ...form, photo: data.url }));
+      } catch (error) {
+        alert(error);
+      } finally {
+        setGeneratingImg(false);
+      }
+    } else {
+      alert("Please enter a prompt");
+    }
   };
 
   return (
     <section className="max-w-7xl mx-auto">
       <>
-        <h1 className="font-extrabold text-[32px] text-app_black">Create</h1>
-        <p className="mt-2 text-app_gray text-[16px] max-w-[500px]">
+        <h1 className="font-extrabold text-4xl text-app_black">Create</h1>
+        <p className="mt-2 text-app_gray text-base max-w-[500px]">
           Create imaginative and visually stunning images through DALL-E AI and share them with the
           community
         </p>
       </>
 
-      <form onSubmit={handleSubmit} className="mt-16 max-w-3xl">
-        <div className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col mt-12 max-w-3xl">
+        <div className="flex flex-col gap-4">
           <FormField
             type="text"
             labelName="Your name"
@@ -58,7 +77,7 @@ const CreatePost = () => {
           <FormField
             type="text"
             labelName="Prompt"
-            name="name"
+            name="prompt"
             value={form.prompt}
             placeholder="an oil painting portrait of a capybara wearing medieval royal robes and an ornate crown on a dark background"
             handleChange={handleChange}
@@ -66,11 +85,15 @@ const CreatePost = () => {
             handleSurpriseMe={handleSurpriseMe}
           />
         </div>
-        <div className="relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex-justify-center items-center">
+        <div className="flex items-center justify-center justify-self-center self-center relative bg-gray-50 border-2 border-gray-300 shadow-inner ring-2 ring-gray-400 rounded-lg w-3/4 h-auto p-1 mt-10">
           {form.photo ? (
             <img src={form.photo} alt={form.prompt} className="w-full h-full object-contain" />
           ) : (
-            <img src={preview} alt={preview} className="w-9/12 h-9/12 object-contain opacity-40" />
+            <img
+              src="https://cdn.britannica.com/29/72029-050-B6BFB4EC/Dolly-sheep-adult-mammal-Edinburgh-Roslin-Institute.jpg"
+              alt="preview"
+              className="w-full h-full object-contain opacity-50"
+            />
           )}
 
           {generatingImg && (
@@ -79,7 +102,8 @@ const CreatePost = () => {
             </div>
           )}
         </div>
-        <div className="flex gap-5 mt-5">
+
+        <div className="flex mt-5 justify-self-center self-center">
           <button
             type="button"
             onClick={generateImage}

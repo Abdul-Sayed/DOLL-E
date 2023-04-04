@@ -20,8 +20,8 @@ const FormField = ({
   handleSurpriseMe,
 }: Props) => {
   return (
-    <>
-      <div className="flex items-center gap-2 mb-2">
+    <div className="mb-1 mt-1">
+      <div className="flex items-center gap-2">
         <label htmlFor={name} className="block text-sm font-medium text-gray-900">
           {labelName}
         </label>
@@ -43,9 +43,9 @@ const FormField = ({
         id={name}
         placeholder={placeholder}
         onChange={handleChange}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#4649ff] focus:border-[#4649ff] block w-full shadow-sm sm:text-sm outline-none p-3"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#4649ff] focus:border-[#4649ff] block w-full shadow-sm sm:text-sm outline-none p-3 mt-2"
       />
-    </>
+    </div>
   );
 };
 
