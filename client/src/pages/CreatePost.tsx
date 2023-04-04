@@ -17,6 +17,27 @@ const CreatePost = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Submit the form
     e.preventDefault();
+    setLoading(true);
+    if (form.name && form.prompt && form.photo) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/posts`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        });
+        await response.json();
+
+        navigate("/");
+      } catch (error) {
+        alert(error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      alert("Please fill out all the fields");
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

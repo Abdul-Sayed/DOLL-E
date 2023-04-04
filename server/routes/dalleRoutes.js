@@ -16,7 +16,6 @@ router.route("/").post(async (req, res) => {
       n: 1,
       size: "512x512",
     });
-    console.log(imgResponse.data.data[0]);
     const url = imgResponse.data.data[0].url;
     res.status(200).json({ url });
   } catch (error) {

@@ -1,30 +1,50 @@
 import { useState, useEffect } from "react";
-import { Loader, Card, FormField } from "../components";
+import { Loader, RenderCards, FormField } from "../components";
+import { PostType } from "../types";
 
 const Home = () => {
-  const [posts, setPosts] = useState<string[]>([]);
+  const [posts, setPosts] = useState<PostType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
+  const [searchedResults, setSearchedResults] = useState<PostType[]>([]);
 
-  type Post = {
-    _id: string;
-    title: string;
-  };
-  type CardData = {
-    data: Post[];
-    title: string;
-  };
-  const RenderCards = ({ data, title }: CardData): JSX.Element => {
-    if (data?.length > 0 && typeof data !== "string") {
-      return (
-        <>
-          {data.map((post) => (
-            <Card key={post._id} {...post} />
-          ))}
-        </>
+  useEffect(() => {
+    // Fetch all the posts
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:8080/api/posts`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const posts = await response.json();
+          console.log("posts", posts);
+          setPosts(posts.data.reverse());
+        }
+      } catch (error) {
+        alert(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("value: ", e.target.value);
+    const { value } = e.target;
+    setSearchText(value);
+    if (value) {
+      const filteredPosts = posts.filter(
+        (post) =>
+          post.name.toLowerCase().includes(value.toLowerCase()) ||
+          post.prompt.toLowerCase().includes(value.toLowerCase())
       );
+      setSearchedResults(filteredPosts);
     }
-    return <h2 className="mt-5 font-bold text-[#6449ff] text-xl uppercase">{title}</h2>;
   };
 
   return (
@@ -36,7 +56,18 @@ const Home = () => {
           DALL-E AI
         </p>
       </div>
-      <div className="mt-16">{/* <FormField /> */}</div>
+      <div className="mt-12 mb-8">
+        {
+          <FormField
+            type="text"
+            labelName="Search images"
+            name="text"
+            value={searchText}
+            placeholder="Search"
+            handleChange={(e) => handleSearch(e)}
+          />
+        }
+      </div>
       <div>
         {loading ? (
           <Loader />
@@ -49,9 +80,9 @@ const Home = () => {
             )}
             <div className="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-3">
               {searchText ? (
-                <RenderCards data={[]} title="No search Results found" />
+                <RenderCards posts={searchedResults} title={searchText} />
               ) : (
-                <RenderCards data={[]} title="No posts found" />
+                <RenderCards posts={posts} title="No posts found" />
               )}
             </div>
           </>

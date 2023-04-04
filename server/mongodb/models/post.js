@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 // Create a schema
-const Post = new mongoose.Schema({
+const PostSchema = new mongoose.Schema({
   name: { type: String, required: true },
   prompt: { type: String, required: true },
   photo: { type: String, required: true },
 });
 
 // Create a MongoDB model using the schema
-const PostSchema = mongoose.model("Post", Post);
+const Post = mongoose.model("Post", PostSchema);
 
-export default PostSchema;
+export default Post;
