@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
 import { Loader, RenderCards, FormField } from "../components";
 import { PostType } from "../types";
+import { backend_domain } from "../utils";
 
 const Home = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
-  const [searchedResults, setSearchedResults] = useState<PostType[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<PostType[]>([]);
 
   useEffect(() => {
     // Fetch all the posts
     const fetchPosts = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:8080/api/posts`, {
+        const response = await fetch(`${backend_domain}/api/posts`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -21,7 +22,6 @@ const Home = () => {
         });
         if (response.ok) {
           const posts = await response.json();
-          console.log("posts", posts);
           setPosts(posts.data.reverse());
         }
       } catch (error) {
@@ -34,16 +34,16 @@ const Home = () => {
   }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("value: ", e.target.value);
+    // Filter the posts
     const { value } = e.target;
     setSearchText(value);
     if (value) {
-      const filteredPosts = posts.filter(
+      const searchedResults = posts.filter(
         (post) =>
           post.name.toLowerCase().includes(value.toLowerCase()) ||
           post.prompt.toLowerCase().includes(value.toLowerCase())
       );
-      setSearchedResults(filteredPosts);
+      setFilteredPosts(searchedResults);
     }
   };
 
@@ -56,7 +56,7 @@ const Home = () => {
           DALL-E AI
         </p>
       </div>
-      <div className="mt-12 mb-8">
+      <form className="mt-12 mb-8">
         {
           <FormField
             type="text"
@@ -67,7 +67,7 @@ const Home = () => {
             handleChange={(e) => handleSearch(e)}
           />
         }
-      </div>
+      </form>
       <div>
         {loading ? (
           <Loader />
@@ -80,9 +80,9 @@ const Home = () => {
             )}
             <div className="grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-3">
               {searchText ? (
-                <RenderCards posts={searchedResults} title={searchText} />
+                <RenderCards posts={filteredPosts} title={`No results for ${searchText}`} />
               ) : (
-                <RenderCards posts={posts} title="No posts found" />
+                <RenderCards posts={posts} title="Create some images" />
               )}
             </div>
           </>

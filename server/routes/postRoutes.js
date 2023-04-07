@@ -1,6 +1,5 @@
 import express from "express";
 import * as dotenv from "dotenv";
-import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
 
 import Post from "../mongodb/models/post.js";
@@ -32,7 +31,6 @@ router.route("/").post(async (req, res) => {
         throw new Error(`Failed to save image`);
       }
     });
-    console.log("photoUrl:", photoUrl.secure_url);
     const newPost = await Post.create({
       name,
       prompt,

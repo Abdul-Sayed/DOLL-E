@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getRandomPrompt } from "../utils";
 import { FormField, Loader } from "../components";
 import { preview } from "../assets";
+import { backend_domain } from "../utils";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const CreatePost = () => {
     setLoading(true);
     if (form.name && form.prompt && form.photo) {
       try {
-        const response = await fetch(`http://localhost:8080/api/posts`, {
+        const response = await fetch(`${backend_domain}/api/posts`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -56,7 +57,7 @@ const CreatePost = () => {
     if (form.prompt) {
       try {
         setGeneratingImg(true);
-        const response = await fetch(`http://localhost:8080/api/dalle`, {
+        const response = await fetch(`${backend_domain}/api/dalle`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -112,7 +113,7 @@ const CreatePost = () => {
           ) : (
             <img
               src="https://cdn.britannica.com/29/72029-050-B6BFB4EC/Dolly-sheep-adult-mammal-Edinburgh-Roslin-Institute.jpg"
-              alt="preview"
+              alt={preview}
               className="w-full h-full object-contain opacity-50"
             />
           )}

@@ -11,3 +11,5 @@ export const getRandomPrompt = (prompt: string): string => {
 export async function downloadImage(_id: string, photo: string) {
   FileSaver.saveAs(photo, `download-${_id}.jpg`);
 }
+
+export const backend_domain = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
